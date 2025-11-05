@@ -3,75 +3,69 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Birsa Munda — 80 MCQ Quiz (Hindi)</title>
+  <title>बिरसा मुंडा — 100 MCQ Quiz (हिन्दी)</title>
   <style>
-    :root{--bg:#0f1724;--card:#0b1220;--accent:#0ea5a4;--muted:#94a3b8;--success:#16a34a;--danger:#ef4444}
+    :root{--bg:#f8fafc;--card:#ffffff;--accent:#047857;--muted:#6b7280;--success:#16a34a;--danger:#dc2626}
     *{box-sizing:border-box}
-    body{margin:0;font-family:Inter,system-ui,Segoe UI,Roboto,'Noto Sans',Arial; background:linear-gradient(180deg,#071226 0%,#081423 100%);color:#e6eef6}
-    header{padding:28px 20px;border-bottom:1px solid rgba(255,255,255,.04);display:flex;gap:16px;align-items:center}
-    header h1{margin:0;font-size:20px;letter-spacing:.2px}
-    header p{margin:0;color:var(--muted);font-size:13px}
-    .container{max-width:1100px;margin:28px auto;padding:20px}
-    .card{background:linear-gradient(180deg,rgba(255,255,255,.02),transparent);border-radius:12px;padding:18px;box-shadow:0 6px 20px rgba(2,6,23,.6);}
-    .controls{display:flex;gap:12px;flex-wrap:wrap;margin-bottom:12px}
-    button{background:var(--accent);border:0;padding:10px 14px;border-radius:8px;color:#012;cursor:pointer;font-weight:600}
-    button.secondary{background:transparent;border:1px solid rgba(255,255,255,.06);color:var(--muted);font-weight:600}
-    .q{padding:12px;border-radius:8px;margin-bottom:10px;border:1px solid rgba(255,255,255,.03);background:rgba(255,255,255,.01)}
+    body{margin:0;font-family:Inter,system-ui,Segoe UI,Roboto,'Noto Sans',Arial;background:var(--bg);color:#0f1724}
+    header{background:linear-gradient(90deg,var(--accent),#065f46);color:white;padding:18px 16px;text-align:center}
+    header h1{margin:0;font-size:18px}
+    header p{margin:6px 0 0;font-size:13px;opacity:.92}
+    .container{max-width:900px;margin:14px auto;padding:12px}
+    .card{background:var(--card);border-radius:12px;padding:14px;box-shadow:0 8px 24px rgba(15,23,42,.06)}
+    .controls{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px}
+    .btn{background:var(--accent);border:0;padding:10px 12px;border-radius:10px;color:white;cursor:pointer;font-weight:600}
+    .btn.secondary{background:transparent;border:1px solid rgba(15,23,42,.06);color:var(--muted);font-weight:600}
+    .stats{margin-left:auto;display:flex;gap:8px;align-items:center}
+    .stat{background:#f1f5f9;padding:8px 10px;border-radius:10px;font-size:13px;color:var(--muted)}
+    .q{padding:12px;border-radius:10px;margin-bottom:8px;border:1px solid rgba(2,6,23,.04);background:linear-gradient(180deg,#ffffff,#fbfbfb)}
     .q h3{margin:0 0 8px 0;font-size:15px}
     .options{display:flex;flex-direction:column;gap:8px}
-    label.option{display:flex;align-items:center;gap:10px;padding:8px;border-radius:8px;cursor:pointer}
-    input[type=radio]{accent-color:var(--accent)}
-    .muted{color:var(--muted);font-size:13px}
-    .result{margin-top:16px;padding:12px;border-radius:8px}
-    .correct{background:rgba(22,163,74,.09);border-left:4px solid var(--success);color:var(--success);padding:10px}
-    .incorrect{background:rgba(239,68,68,.08);border-left:4px solid var(--danger);color:var(--danger);padding:10px}
-    .answer{font-size:13px;margin-top:6px;color:var(--muted)}
-    .summary{display:flex;gap:12px;align-items:center;flex-wrap:wrap}
-    .badge{background:rgba(255,255,255,.03);padding:8px 10px;border-radius:8px}
-    footer{margin-top:20px;color:var(--muted);font-size:13px}
-    @media (max-width:700px){header{flex-direction:column;align-items:flex-start} .summary{flex-direction:column;align-items:flex-start}}
+    label.option{display:flex;align-items:center;gap:10px;padding:10px;border-radius:8px;cursor:pointer;border:1px solid transparent}
+    label.option input{transform:scale(1.05)}
+    .answer{font-size:13px;margin-top:8px;color:var(--muted)}
+    .resultBox{margin-top:12px;padding:12px;border-radius:10px}
+    .correctBox{background:rgba(16,185,129,.08);border-left:4px solid var(--success);color:var(--success)}
+    .incorrectBox{background:rgba(252,165,165,.08);border-left:4px solid var(--danger);color:var(--danger)}
+    footer{margin-top:14px;color:var(--muted);font-size:13px;text-align:center}
+    @media (max-width:720px){header h1{font-size:16px} .controls{flex-direction:column;align-items:stretch} .stats{margin-left:0;justify-content:space-between} .stat{width:48%}}
   </style>
 </head>
 <body>
   <header>
-    <div>
-      <h1>बिरसा मुंडा — 80 MCQ Quiz (हिन्दी)</h1>
-      <p>कुल प्रश्न: 80 • मल्टीपल चॉइस • प्रश्न हल करने के बाद "Submit" करें</p>
-    </div>
+    <h1>बिरसा मुंडा — 80 MCQ Quiz (हिन्दी)</h1>
+    <p>THE UNIVERSITY OF MATHEMATICS</p>
   </header>
 
   <main class="container">
     <div class="card">
       <div class="controls">
-        <button id="submitBtn">Submit Quiz</button>
-        <button class="secondary" id="resetBtn">Reset Answers</button>
-        <button class="secondary" id="showAnsBtn">Toggle Correct Answers</button>
-        <div style="margin-left:auto" class="muted">स्कोर: <span id="scoreDisplay">0 / 100</span></div>
+        <button id="submitBtn" class="btn">Submit Quiz</button>
+        <button id="resetBtn" class="btn secondary">Reset Answers</button>
+        <button id="toggleAnsBtn" class="btn secondary">Show Answers: OFF</button>
+        <div class="stats">
+          <div class="stat">सही: <span id="correctCount">0</span></div>
+          <div class="stat">गलत: <span id="wrongCount">0</span></div>
+          <div class="stat">अनुत्तरित: <span id="unansweredCount">100</span></div>
+        </div>
       </div>
 
-      <div id="quiz"></div>
+      <div id="quizArea"></div>
 
       <div id="resultArea"></div>
 
-      <footer>
-        <div class="summary">
-          <div class="badge">सही: <span id="correctCount">0</span></div>
-          <div class="badge">गलत: <span id="wrongCount">0</span></div>
-          <div class="badge">अनुत्तरित: <span id="unansweredCount">100</span></div>
-        </div>
-      </footer>
+      <footer>MATHS BY VIKRAM SIR</footer>
     </div>
   </main>
 
   <script>
-    // Questions array: 100 Birsa Munda MCQs (Hindi)
-    // Each item: {q: 'question', options: ['A','B','C','D'], a: 0} where a is the correct index (0-based)
+    // Full 100 questions array (Hindi)
     const questions = [
       {q:`बिरसा मुंडा का जन्म कब हुआ था?`, options:[`15 नवम्बर 1875`,`15 नवम्बर 1880`,`20 अक्टूबर 1870`,`12 जनवरी 1875`], a:0},
       {q:`बिरसा मुंडा का जन्म कहाँ हुआ था?`, options:[`राँची`,`उलिहातू गाँव`,`खूँटी`,`लोहरदगा`], a:1},
       {q:`बिरसा मुंडा किस जनजाति से सम्बन्धित थे?`, options:[`संथाल`,`मुंडा`,`उराँव`,`हो`], a:1},
       {q:`बिरसा मुंडा को किस नाम से भी जाना जाता है?`, options:[`धरती आबा`,`जल गुरु`,`आदिवासी सम्राट`,`जननायक`], a:0},
-      {q:`बिरसा मुंडा का आंदोलन किसके विरुद्ध था?`, options:[`अंग्रेज़ सरकार और जमींदारों के विरुद्ध`,`मुगलों के विरुद्ध`,`मराठों के विरुद्ध`,`फैसला कानून के विरुद्ध`], a:0},
+      {q:`बिरसा मुंडा का आंदोलन किसके विरुद्ध था?`, options:[`अंग्रेज़ सरकार और जमींदारों के विरुद्ध`,`मुगलों के विरुद्ध`,`मराठों के विरुद्ध`,`पेसा कानून के विरुद्ध`], a:0},
       {q:`बिरसा मुंडा ने किस आंदोलन की शुरुआत की थी?`, options:[`असहयोग आंदोलन`,`उलुगुलान (महाविद्रोह)`,`नील आंदोलन`,`तेभागा आंदोलन`], a:1},
       {q:`‘उलगुलान’ का क्या अर्थ है?`, options:[`बड़ी लड़ाई`,`भूमि दान`,`शिक्षा अभियान`,`वन अधिकार`], a:0},
       {q:`बिरसा मुंडा का निधन कब हुआ था?`, options:[`9 जून 1900`,`15 नवम्बर 1901`,`11 जून 1900`,`15 जून 1902`], a:0},
@@ -136,7 +130,7 @@
       {q:`बिरसा मुंडा ने अपने अनुयायियों को किस प्रकार का जीवन जीने की प्रेरणा दी?`, options:[`सादगी और सत्य का जीवन`,`विलासिता`,`युद्धप्रिय जीवन`,`औपनिवेशिक सेवा`], a:0},
       {q:`बिरसा मुंडा का प्रमुख दुश्मन कौन था?`, options:[`दिकू (बाहरी लोग)`,`मिशनरी`,`राजा`,`सैनिक`], a:0},
       {q:`बिरसा मुंडा के विद्रोह का प्रभाव किन कानूनों में दिखाई दिया?`, options:[`भूमि अधिकार और जनजातीय संरक्षण कानून`,`शिक्षा नीति`,`कर नीति`,`वाणिज्य नीति`], a:0},
-      {q:`बिरसा मुंडा के नाम पर कौन-सा राष्ट्रीय उद्यान है?`, options:[`बिरसा जैविक उद्यान, राँची`,`सिमलीपाल`,`कान्हा`,`संडरबन`], a:0},
+      {q:`बिरसा मुंडा के नाम पर कौन-सा राष्ट्रीय उद्यान है?`, options:[`बिरसा जैविक उद्यान, राँची`,`सिमलीपाल`,`कान्हा`,`सुंदरबन`], a:0},
       {q:`बिरसा मुंडा की समाधि स्थल कहाँ है?`, options:[`राँची (कोकर)`,`खूँटी`,`जमशेदपुर`,`डल्टनगंज`], a:0},
       {q:`बिरसा मुंडा का आंदोलन किस उपनिवेशिक नीतियों के खिलाफ था?`, options:[`भूमि, कर और धार्मिक शोषण`,`शिक्षा नीति`,`उद्योग नीति`,`व्यापार नीति`], a:0},
       {q:`बिरसा मुंडा की शिक्षाएँ किस वर्ग के लिए सबसे अधिक प्रासंगिक थीं?`, options:[`जनजातीय समाज`,`व्यापारी`,`ब्राह्मण`,`राजाओं`], a:0},
@@ -149,11 +143,10 @@
       {q:`बिरसा मुंडा की विरासत आज कैसे जीवित है?`, options:[`झारखंड राज्य, आदिवासी गौरव, स्मारक और शिक्षा संस्थान`,`केवल इतिहास पुस्तकों में`,`लोक गीतों में मात्र`,`अंग्रेज अभिलेखों में`], a:0}
     ];
 
-    const quizEl = document.getElementById('quiz');
+    const quizArea = document.getElementById('quizArea');
     const submitBtn = document.getElementById('submitBtn');
     const resetBtn = document.getElementById('resetBtn');
-    const showAnsBtn = document.getElementById('showAnsBtn');
-    const scoreDisplay = document.getElementById('scoreDisplay');
+    const toggleAnsBtn = document.getElementById('toggleAnsBtn');
     const correctCountEl = document.getElementById('correctCount');
     const wrongCountEl = document.getElementById('wrongCount');
     const unansweredCountEl = document.getElementById('unansweredCount');
@@ -164,81 +157,62 @@
     function buildQuiz(){
       const frag = document.createDocumentFragment();
       questions.forEach((item, idx) => {
-        const qwrap = document.createElement('div'); qwrap.className='q'; qwrap.id = 'q'+idx;
-        const h = document.createElement('h3'); h.textContent = (idx+1)+'. '+item.q; qwrap.appendChild(h);
-        const optWrap = document.createElement('div'); optWrap.className='options';
-        item.options.forEach((opt, i) => {
+        const q = document.createElement('div'); q.className='q'; q.id='q'+idx;
+        const h = document.createElement('h3'); h.innerText = (idx+1)+'. '+item.q; q.appendChild(h);
+        const opts = document.createElement('div'); opts.className='options';
+        item.options.forEach((op,i)=>{
           const label = document.createElement('label'); label.className='option';
           const radio = document.createElement('input'); radio.type='radio'; radio.name='q'+idx; radio.value=i;
-          const span = document.createElement('span'); span.textContent = String.fromCharCode(65+i)+'. '+opt;
+          const span = document.createElement('span'); span.innerText = String.fromCharCode(65+i)+'. '+op;
           label.appendChild(radio); label.appendChild(span);
-          optWrap.appendChild(label);
+          opts.appendChild(label);
         });
-        qwrap.appendChild(optWrap);
-        frag.appendChild(qwrap);
+        q.appendChild(opts);
+        frag.appendChild(q);
       });
-      quizEl.innerHTML=''; quizEl.appendChild(frag);
+      quizArea.innerHTML=''; quizArea.appendChild(frag);
     }
 
     function gradeQuiz(){
-      let correct = 0, wrong = 0, unanswered = 0;
+      let correct=0, wrong=0, unanswered=0;
       resultArea.innerHTML='';
 
-      questions.forEach((item, idx) => {
-        const chosen = document.querySelector('input[name="q'+idx+'"]:checked');
+      questions.forEach((item, idx)=>{
+        const selected = document.querySelector('input[name="q'+idx+'"]:checked');
         const qEl = document.getElementById('q'+idx);
-        // clear previous markers
-        qEl.querySelectorAll('.option').forEach(el=>{el.style.opacity='1'; el.style.border='none'});
+        // remove existing answer display
+        const prevAns = qEl.querySelector('.answer'); if(prevAns) prevAns.remove();
+        qEl.querySelectorAll('.option').forEach(o=>{ o.style.border='1px solid transparent'; o.style.opacity='1' });
 
-        if(!chosen){ unanswered++; qEl.classList.remove('correct','incorrect');
-        } else {
-          const val = parseInt(chosen.value,10);
-          if(val === item.a){ correct++; qEl.classList.add('correct');
-            // highlight chosen correct option
-            const opts = qEl.querySelectorAll('.option'); opts[val].style.border='2px solid rgba(22,163,74,.18)';
-          } else { wrong++; qEl.classList.add('incorrect');
-            const opts = qEl.querySelectorAll('.option'); opts[val].style.opacity='0.7';
-            opts[item.a].style.border='2px solid rgba(22,163,74,.18)';
-          }
+        if(!selected){ unanswered++; }
+        else{
+          const val = parseInt(selected.value,10);
+          if(val === item.a){ correct++; selected.closest('label').style.border = '1px solid rgba(16,185,129,.18)'; }
+          else{ wrong++; selected.closest('label').style.opacity = '0.7'; qEl.querySelectorAll('.option')[item.a].style.border = '1px solid rgba(16,185,129,.18)'; }
         }
 
         if(showAnswers){
-          const ansDiv = document.createElement('div'); ansDiv.className='answer'; ansDiv.textContent = 'सही उत्तर: '+String.fromCharCode(65+item.a)+'. '+item.options[item.a];
-          qEl.appendChild(ansDiv);
-        } else {
-          const existing = qEl.querySelector('.answer'); if(existing) existing.remove();
+          const ansDiv = document.createElement('div'); ansDiv.className='answer'; ansDiv.innerText = 'सही उत्तर: '+String.fromCharCode(65+item.a)+'. '+item.options[item.a]; qEl.appendChild(ansDiv);
         }
       });
 
-      scoreDisplay.textContent = correct + ' / ' + questions.length;
-      correctCountEl.textContent = correct;
-      wrongCountEl.textContent = wrong;
-      unansweredCountEl.textContent = unanswered;
-
-      // show summary
-      resultArea.innerHTML = `<div class="result ${correct>=(questions.length*0.6)?'correct':'incorrect'}">आपका स्कोर: <strong>${correct} / ${questions.length}</strong> — प्रतिशत: <strong>${((correct/questions.length)*100).toFixed(2)}%</strong></div>`;
+      correctCountEl.innerText = correct; wrongCountEl.innerText = wrong; unansweredCountEl.innerText = unanswered;
+      const percent = ((correct/questions.length)*100).toFixed(2);
+      const box = document.createElement('div'); box.className = 'resultBox '+(percent>=60? 'correctBox':'incorrectBox');
+      box.innerHTML = `आपका स्कोर: <strong>${correct} / ${questions.length}</strong><br>प्रतिशत: <strong>${percent}%</strong>`;
+      resultArea.appendChild(box);
       window.scrollTo({top:0,behavior:'smooth'});
     }
 
-    submitBtn.addEventListener('click',()=>{
-      gradeQuiz();
-    });
+    submitBtn.addEventListener('click',()=>{ gradeQuiz(); });
+    resetBtn.addEventListener('click',()=>{ document.querySelectorAll('input[type=radio]').forEach(i=>i.checked=false); document.querySelectorAll('.q').forEach(q=>{ const a=q.querySelector('.answer'); if(a) a.remove(); q.querySelectorAll('.option').forEach(o=>{ o.style.opacity='1'; o.style.border='1px solid transparent' }) }); correctCountEl.innerText='0'; wrongCountEl.innerText='0'; unansweredCountEl.innerText=questions.length; resultArea.innerHTML=''; });
 
-    resetBtn.addEventListener('click',()=>{
-      document.querySelectorAll('input[type=radio]').forEach(r=>r.checked=false);
-      document.querySelectorAll('.q').forEach(q=>{ q.classList.remove('correct','incorrect'); const ans = q.querySelector('.answer'); if(ans) ans.remove(); q.querySelectorAll('.option').forEach(el=>{el.style.opacity='1'; el.style.border='none'}) });
-      scoreDisplay.textContent = '0 / '+questions.length; correctCountEl.textContent='0'; wrongCountEl.textContent='0'; unansweredCountEl.textContent = questions.length;
-      resultArea.innerHTML='';
-    });
+    toggleAnsBtn.addEventListener('click',()=>{ showAnswers = !showAnswers; toggleAnsBtn.innerText = 'Show Answers: '+(showAnswers? 'ON':'OFF'); gradeQuiz(); });
 
-    showAnsBtn.addEventListener('click',()=>{
-      showAnswers = !showAnswers; showAnsBtn.textContent = showAnswers? 'Hide Correct Answers' : 'Toggle Correct Answers';
-      // re-grade to show/hide answers visually
-      gradeQuiz();
-    });
-
-    // build on load
+    // initialize
     buildQuiz();
+    // set unanswered count to total
+    unansweredCountEl.innerText = questions.length;
   </script>
 </body>
 </html>
