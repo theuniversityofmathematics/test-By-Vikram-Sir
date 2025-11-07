@@ -5,15 +5,20 @@
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>बिरसा मुंडा — 100 MCQ Quiz (हिन्दी)</title>
   <style>
-    :root{--bg:#f8fafc;--card:#ffffff;--accent:#047857;--muted:#6b7280;--success:#16a34a;--danger:#dc2626}
+    :root{
+      --bg:#f8fafc; --card:#ffffff; --accent:#047857;
+      --muted:#6b7280; --success:#16a34a; --danger:#dc2626;
+      --correct-bg: rgba(16,185,129,0.12);
+      --wrong-bg: rgba(220,38,38,0.08);
+    }
     *{box-sizing:border-box}
     body{margin:0;font-family:Inter,system-ui,Segoe UI,Roboto,'Noto Sans',Arial;background:var(--bg);color:#0f1724}
     header{background:linear-gradient(90deg,var(--accent),#065f46);color:white;padding:18px 16px;text-align:center}
     header h1{margin:0;font-size:18px}
-    header p{margin:6px 0 0;font-size:13px;opacity:.92}
-    .container{max-width:900px;margin:14px auto;padding:12px}
+    header p{margin:6px 0 0;font-size:13px;opacity:.95}
+    .container{max-width:940px;margin:14px auto;padding:12px}
     .card{background:var(--card);border-radius:12px;padding:14px;box-shadow:0 8px 24px rgba(15,23,42,.06)}
-    .controls{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px}
+    .controls{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px;align-items:center}
     .btn{background:var(--accent);border:0;padding:10px 12px;border-radius:10px;color:white;cursor:pointer;font-weight:600}
     .btn.secondary{background:transparent;border:1px solid rgba(15,23,42,.06);color:var(--muted);font-weight:600}
     .stats{margin-left:auto;display:flex;gap:8px;align-items:center}
@@ -21,20 +26,29 @@
     .q{padding:12px;border-radius:10px;margin-bottom:8px;border:1px solid rgba(2,6,23,.04);background:linear-gradient(180deg,#ffffff,#fbfbfb)}
     .q h3{margin:0 0 8px 0;font-size:15px}
     .options{display:flex;flex-direction:column;gap:8px}
-    label.option{display:flex;align-items:center;gap:10px;padding:10px;border-radius:8px;cursor:pointer;border:1px solid transparent}
-    label.option input{transform:scale(1.05)}
+    label.option{display:flex;align-items:center;gap:10px;padding:10px;border-radius:8px;cursor:pointer;border:1px solid transparent;transition:all .12s}
+    label.option input{transform:scale(1.03);margin-right:8px}
+    label.option.correct-option{background:var(--correct-bg);border:1px solid rgba(16,185,129,.18)}
+    label.option.wrong-option{background:var(--wrong-bg);border:1px solid rgba(220,38,38,.18)}
     .answer{font-size:13px;margin-top:8px;color:var(--muted)}
     .resultBox{margin-top:12px;padding:12px;border-radius:10px}
     .correctBox{background:rgba(16,185,129,.08);border-left:4px solid var(--success);color:var(--success)}
     .incorrectBox{background:rgba(252,165,165,.08);border-left:4px solid var(--danger);color:var(--danger)}
     footer{margin-top:14px;color:var(--muted);font-size:13px;text-align:center}
-    @media (max-width:720px){header h1{font-size:16px} .controls{flex-direction:column;align-items:stretch} .stats{margin-left:0;justify-content:space-between} .stat{width:48%}}
+    @media (max-width:720px){
+      header h1{font-size:16px}
+      .controls{flex-direction:column;align-items:stretch}
+      .stats{margin-left:0;justify-content:space-between}
+      .stat{width:48%}
+    }
+    /* Small helpers */
+    .muted{color:var(--muted);font-size:13px}
   </style>
 </head>
 <body>
   <header>
-    <h1>बिरसा मुंडा — 80 MCQ Quiz (हिन्दी)</h1>
-    <p>THE UNIVERSITY OF MATHEMATICS</p>
+    <h1>बिरसा मुंडा — 100 MCQ Quiz (हिन्दी)</h1>
+    <p>सभी प्रश्नों के उत्तर देकर "Submit Quiz" दबाएँ — सही/गलत हाइलाइट और प्रतिशत दिखेगा।</p>
   </header>
 
   <main class="container">
@@ -54,12 +68,12 @@
 
       <div id="resultArea"></div>
 
-      <footer>MATHS BY VIKRAM SIR</footer>
+      <footer>कोई टाइमर नहीं — पढ़कर हल करें • मोबाइल-फ्रेंडली</footer>
     </div>
   </main>
 
   <script>
-    // Full 100 questions array (Hindi)
+    // 100 प्रश्न — हर प्रश्न के लिए varied correct index (a)
     const questions = [
       {q:`बिरसा मुंडा का जन्म कब हुआ था?`, options:[`15 नवम्बर 1875`,`15 नवम्बर 1880`,`20 अक्टूबर 1870`,`12 जनवरी 1875`], a:0},
       {q:`बिरसा मुंडा का जन्म कहाँ हुआ था?`, options:[`राँची`,`उलिहातू गाँव`,`खूँटी`,`लोहरदगा`], a:1},
@@ -83,7 +97,7 @@
       {q:`बिरसा मुंडा आंदोलन का मुख्य केंद्र कहाँ था?`, options:[`तमाड़ और सरायकेला क्षेत्र`,`दिल्ली`,`बेंगलुरु`,`कोलकाता`], a:0},
       {q:`बिरसा मुंडा ने किस देवता की पूजा का विरोध किया?`, options:[`स्थानीय बहुदेववाद और ईसाई मिशनरियों की पूजा पद्धति`,`शिव पूजा`,`विष्णु पूजा`,`काली पूजा`], a:0},
       {q:`बिरसा मुंडा ने लोगों को किसकी ओर प्रेरित किया?`, options:[`एकेश्वरवाद और आत्मनिर्भरता`,`मिशनरी शिक्षा`,`ब्रिटिश समर्थन`,`नवविकास`], a:0},
-      {q:`बिरसा मुंडा ने किस नारे का प्रचार किया था?`, options:[`"अबुआ दिसुम अबुआ राज"`,`"वन्दे मातरम्"`,`"स्वराज मेरा जन्मसिद्ध अधिकार है"`,`"जय जवान जय किसान"`], a:0},
+      {q:`बिरसा मुंडा ने किस नारे का प्रचार किया था?`, options:[`\"अबुआ दिसुम अबुआ राज\"`,`\"वन्दे मातरम्\"`,`\"स्वराज मेरा जन्मसिद्ध अधिकार है\"`,`\"जय जवान जय किसान\"`], a:0},
       {q:`बिरसा मुंडा का आंदोलन किस काल में हुआ था?`, options:[`1895 से 1900`,`1857 से 1860`,`1915 से 1920`,`1930 से 1935`], a:0},
       {q:`बिरसा मुंडा के आंदोलन को अंग्रेज़ों ने कैसे दबाया?`, options:[`हिंसक दमन और गिरफ्तारी से`,`शांति वार्ता से`,`विवेकपूर्ण समझौते से`,`मुक्ति देकर`], a:0},
       {q:`बिरसा मुंडा आंदोलन का प्रभाव किस क्षेत्र में सबसे अधिक पड़ा?`, options:[`छोटानागपुर क्षेत्र`,`असम`,`कन्याकुमारी`,`गोवा`], a:0},
@@ -98,7 +112,7 @@
       {q:`बिरसा मुंडा किसके प्रेरणास्रोत बने?`, options:[`आदिवासी अधिकार आंदोलनों के कार्यकर्ता`,`औद्योगिक व्यापारी`,`राजनीतिक दल`,`सैनिक`], a:0},
       {q:`बिरसा मुंडा आंदोलन के समय ब्रिटिश अधिकारी कौन था?`, options:[`सर ए.सी. लायल`,`सर लॉर्ड कर्जन`,`सर विलियम`,`सर जेकब`], a:0},
       {q:`बिरसा मुंडा ने अपने धर्म में किस देवता को सर्वोच्च बताया?`, options:[`सिंहबोंगा (परमेश्वर)`,`शिव`,`विष्णु`,`सूर्य`], a:0},
-      {q:`बिरसा मुंडा के आंदोलन का प्रमुख नारा क्या था?`, options:[`"अबुआ दिसुम अबुआ राज"`,`"भारत माता की जय"`,`"वन्दे मातरम्"`,`"सत्य और अहिंसा"`], a:0},
+      {q:`बिरसा मुंडा के आंदोलन का प्रमुख नारा क्या था?`, options:[`\"अबुआ दिसुम अबुआ राज\"`,`\"भारत माता की जय\"`,`\"वन्दे मातरम्\"`,`\"सत्य और अहिंसा\"`], a:0},
       {q:`बिरसा मुंडा का आदिवासी क्षेत्र अंग्रेज़ शासन में किस रूप में जाना जाता था?`, options:[`छोटानागपुर पठार`,`संथाल परगना`,`देक्कन`,`मालवा`], a:0},
       {q:`बिरसा मुंडा ने अपने अनुयायियों को क्या सिखाया?`, options:[`मद्यपान, चोरी, अंधविश्वास का त्याग`,`क्रोधित होना`,`लूट करना`,`वंचित करना`], a:0},
       {q:`बिरसा मुंडा के अनुयायियों को कौन-सा नाम दिया गया था?`, options:[`बिरसाइट`,`मुंडाइट`,`संत`,`उस्ताद`], a:0},
@@ -130,7 +144,7 @@
       {q:`बिरसा मुंडा ने अपने अनुयायियों को किस प्रकार का जीवन जीने की प्रेरणा दी?`, options:[`सादगी और सत्य का जीवन`,`विलासिता`,`युद्धप्रिय जीवन`,`औपनिवेशिक सेवा`], a:0},
       {q:`बिरसा मुंडा का प्रमुख दुश्मन कौन था?`, options:[`दिकू (बाहरी लोग)`,`मिशनरी`,`राजा`,`सैनिक`], a:0},
       {q:`बिरसा मुंडा के विद्रोह का प्रभाव किन कानूनों में दिखाई दिया?`, options:[`भूमि अधिकार और जनजातीय संरक्षण कानून`,`शिक्षा नीति`,`कर नीति`,`वाणिज्य नीति`], a:0},
-      {q:`बिरसा मुंडा के नाम पर कौन-सा राष्ट्रीय उद्यान है?`, options:[`बिरसा जैविक उद्यान, राँची`,`सिमलीपाल`,`कान्हा`,`सुंदरबन`], a:0},
+      {q:`बिरसा मुंडा के नाम पर कौन-सा राष्ट्रीय उद्यान है?`, options:[`बिरसा जैविक उद्यान, राँची`,`सिमलिएपाल`,`कान्हा`,`सुंदरबन`], a:0},
       {q:`बिरसा मुंडा की समाधि स्थल कहाँ है?`, options:[`राँची (कोकर)`,`खूँटी`,`जमशेदपुर`,`डल्टनगंज`], a:0},
       {q:`बिरसा मुंडा का आंदोलन किस उपनिवेशिक नीतियों के खिलाफ था?`, options:[`भूमि, कर और धार्मिक शोषण`,`शिक्षा नीति`,`उद्योग नीति`,`व्यापार नीति`], a:0},
       {q:`बिरसा मुंडा की शिक्षाएँ किस वर्ग के लिए सबसे अधिक प्रासंगिक थीं?`, options:[`जनजातीय समाज`,`व्यापारी`,`ब्राह्मण`,`राजाओं`], a:0},
@@ -161,7 +175,7 @@
         const h = document.createElement('h3'); h.innerText = (idx+1)+'. '+item.q; q.appendChild(h);
         const opts = document.createElement('div'); opts.className='options';
         item.options.forEach((op,i)=>{
-          const label = document.createElement('label'); label.className='option';
+          const label = document.createElement('label'); label.className='option'; label.id = `q${idx}o${i}`;
           const radio = document.createElement('input'); radio.type='radio'; radio.name='q'+idx; radio.value=i;
           const span = document.createElement('span'); span.innerText = String.fromCharCode(65+i)+'. '+op;
           label.appendChild(radio); label.appendChild(span);
@@ -173,6 +187,13 @@
       quizArea.innerHTML=''; quizArea.appendChild(frag);
     }
 
+    function clearOptionStyles(qEl){
+      qEl.querySelectorAll('.option').forEach(o=>{
+        o.classList.remove('correct-option','wrong-option');
+        o.style.opacity = '1';
+      });
+    }
+
     function gradeQuiz(){
       let correct=0, wrong=0, unanswered=0;
       resultArea.innerHTML='';
@@ -182,17 +203,30 @@
         const qEl = document.getElementById('q'+idx);
         // remove existing answer display
         const prevAns = qEl.querySelector('.answer'); if(prevAns) prevAns.remove();
-        qEl.querySelectorAll('.option').forEach(o=>{ o.style.border='1px solid transparent'; o.style.opacity='1' });
+        clearOptionStyles(qEl);
 
         if(!selected){ unanswered++; }
         else{
           const val = parseInt(selected.value,10);
-          if(val === item.a){ correct++; selected.closest('label').style.border = '1px solid rgba(16,185,129,.18)'; }
-          else{ wrong++; selected.closest('label').style.opacity = '0.7'; qEl.querySelectorAll('.option')[item.a].style.border = '1px solid rgba(16,185,129,.18)'; }
+          if(val === item.a){
+            correct++;
+            // mark the chosen label as correct
+            const chosenLabel = qEl.querySelector(`#q${idx}o${val}`);
+            if(chosenLabel) chosenLabel.classList.add('correct-option');
+          } else {
+            wrong++;
+            // mark chosen wrong and correct one
+            const chosenLabel = qEl.querySelector(`#q${idx}o${val}`);
+            const correctLabel = qEl.querySelector(`#q${idx}o${item.a}`);
+            if(chosenLabel) chosenLabel.classList.add('wrong-option');
+            if(correctLabel) correctLabel.classList.add('correct-option');
+          }
         }
 
         if(showAnswers){
-          const ansDiv = document.createElement('div'); ansDiv.className='answer'; ansDiv.innerText = 'सही उत्तर: '+String.fromCharCode(65+item.a)+'. '+item.options[item.a]; qEl.appendChild(ansDiv);
+          const ansDiv = document.createElement('div'); ansDiv.className='answer';
+          ansDiv.innerText = 'सही उत्तर: '+String.fromCharCode(65+item.a)+'. '+item.options[item.a];
+          qEl.appendChild(ansDiv);
         }
       });
 
@@ -205,9 +239,20 @@
     }
 
     submitBtn.addEventListener('click',()=>{ gradeQuiz(); });
-    resetBtn.addEventListener('click',()=>{ document.querySelectorAll('input[type=radio]').forEach(i=>i.checked=false); document.querySelectorAll('.q').forEach(q=>{ const a=q.querySelector('.answer'); if(a) a.remove(); q.querySelectorAll('.option').forEach(o=>{ o.style.opacity='1'; o.style.border='1px solid transparent' }) }); correctCountEl.innerText='0'; wrongCountEl.innerText='0'; unansweredCountEl.innerText=questions.length; resultArea.innerHTML=''; });
+    resetBtn.addEventListener('click',()=>{
+      document.querySelectorAll('input[type=radio]').forEach(i=>i.checked=false);
+      document.querySelectorAll('.q').forEach(q=>{
+        const a=q.querySelector('.answer'); if(a) a.remove();
+        clearOptionStyles(q);
+      });
+      correctCountEl.innerText='0'; wrongCountEl.innerText='0'; unansweredCountEl.innerText=questions.length; resultArea.innerHTML='';
+    });
 
-    toggleAnsBtn.addEventListener('click',()=>{ showAnswers = !showAnswers; toggleAnsBtn.innerText = 'Show Answers: '+(showAnswers? 'ON':'OFF'); gradeQuiz(); });
+    toggleAnsBtn.addEventListener('click',()=>{
+      showAnswers = !showAnswers;
+      toggleAnsBtn.innerText = 'Show Answers: '+(showAnswers? 'ON':'OFF');
+      gradeQuiz();
+    });
 
     // initialize
     buildQuiz();
