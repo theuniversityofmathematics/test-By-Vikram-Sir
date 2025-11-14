@@ -1,0 +1,218 @@
+<!doctype html>
+<html lang="hi">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>बिरसा मुंडा</title>
+  <style>
+    :root{--bg:#f8fafc;--card:#ffffff;--accent:#047857;--muted:#6b7280;--success:#16a34a;--danger:#dc2626}
+    *{box-sizing:border-box}
+    body{margin:0;font-family:Inter,system-ui,Segoe UI,Roboto,'Noto Sans',Arial;background:var(--bg);color:#0f1724}
+    header{background:linear-gradient(90deg,var(--accent),#065f46);color:white;padding:18px 16px;text-align:center}
+    header h1{margin:0;font-size:18px}
+    header p{margin:6px 0 0;font-size:13px;opacity:.92}
+    .container{max-width:900px;margin:14px auto;padding:12px}
+    .card{background:var(--card);border-radius:12px;padding:14px;box-shadow:0 8px 24px rgba(15,23,42,.06)}
+    .controls{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px}
+    .btn{background:var(--accent);border:0;padding:10px 12px;border-radius:10px;color:white;cursor:pointer;font-weight:600}
+    .btn.secondary{background:transparent;border:1px solid rgba(15,23,42,.06);color:var(--muted);font-weight:600}
+    .stats{margin-left:auto;display:flex;gap:8px;align-items:center}
+    .stat{background:#f1f5f9;padding:8px 10px;border-radius:10px;font-size:13px;color:var(--muted)}
+    .q{padding:12px;border-radius:10px;margin-bottom:8px;border:1px solid rgba(2,6,23,.04);background:linear-gradient(180deg,#ffffff,#fbfbfb)}
+    .q h3{margin:0 0 8px 0;font-size:15px}
+    .options{display:flex;flex-direction:column;gap:8px}
+    label.option{display:flex;align-items:center;gap:10px;padding:10px;border-radius:8px;cursor:pointer;border:1px solid transparent}
+    label.option input{transform:scale(1.05)}
+    .answer{font-size:13px;margin-top:8px;color:var(--muted)}
+    .resultBox{margin-top:12px;padding:12px;border-radius:10px}
+    .correctBox{background:rgba(16,185,129,.08);border-left:4px solid var(--success);color:var(--success)}
+    .incorrectBox{background:rgba(252,165,165,.08);border-left:4px solid var(--danger);color:var(--danger)}
+    footer{margin-top:14px;color:var(--muted);font-size:13px;text-align:center}
+    @media (max-width:720px){header h1{font-size:16px} .controls{flex-direction:column;align-items:stretch} .stats{margin-left:0;justify-content:space-between} .stat{width:48%}}
+  </style>
+</head>
+<body>
+  <header>
+    <h1>बिरसा मुंडा</h1>
+    <p>सभी प्रश्नों के उत्तर देकर "Submit Quiz" दबाएँ — उत्तर और प्रतिशत तुरंत दिखेगा।</p>
+  </header>
+
+  <main class="container">
+    <div class="card">
+      <div class="controls">
+        <button id="submitBtn" class="btn">Submit Quiz</button>
+        <button id="resetBtn" class="btn secondary">Reset Answers</button>
+        <button id="toggleAnsBtn" class="btn secondary">Show Answers: OFF</button>
+        <div class="stats">
+          <div class="stat">सही: <span id="correctCount">0</span></div>
+          <div class="stat">गलत: <span id="wrongCount">0</span></div>
+          <div class="stat">अनुत्तरित: <span id="unansweredCount">100</span></div>
+        </div>
+      </div>
+
+      <div id="quizArea"></div>
+
+      <div id="resultArea"></div>
+
+      <footer>Birsa Munda</footer>
+    </div>
+  </main>
+
+  <script>
+    // Full 100 questions array (Hindi)
+    const questions = [
+      {q:`बिरसा मुंडा का जन्म कब हुआ था?`, options:[`15 नवम्बर 1875`,`15 नवम्बर 1880`,`20 अक्टूबर 1870`,`12 जनवरी 1875`], a:0},
+      {q:`बिरसा मुंडा का जन्म कहाँ हुआ था?`, options:[`राँची`,`उलिहातू गाँव`,`खूँटी`,`लोहरदगा`], a:1},
+      {q:`बिरसा मुंडा किस जनजाति से सम्बन्धित थे?`, options:[`संथाल`,`मुंडा`,`उराँव`,`हो`], a:1},
+      {q:`बिरसा मुंडा को किस नाम से भी जाना जाता है?`, options:[`धरती आबा`,`जल गुरु`,`आदिवासी सम्राट`,`जननायक`], a:0},
+      {q:`बिरसा मुंडा का आंदोलन किसके विरुद्ध था?`, options:[`अंग्रेज़ सरकार और जमींदारों के विरुद्ध`,`मुगलों के विरुद्ध`,`मराठों के विरुद्ध`,`पेसा कानून के विरुद्ध`], a:0},
+      {q:`बिरसा मुंडा ने किस आंदोलन की शुरुआत की थी?`, options:[`असहयोग आंदोलन`,`उलुगुलान (महाविद्रोह)`,`नील आंदोलन`,`तेभागा आंदोलन`], a:1},
+      {q:`‘उलगुलान’ का क्या अर्थ है?`, options:[`बड़ी लड़ाई`,`भूमि दान`,`शिक्षा अभियान`,`वन अधिकार`], a:0},
+      {q:`बिरसा मुंडा का निधन कब हुआ था?`, options:[`9 जून 1900`,`15 नवम्बर 1901`,`11 जून 1900`,`15 जून 1902`], a:0},
+      {q:`बिरसा मुंडा की मृत्यु कहाँ हुई थी?`, options:[`राँची जेल में`,`खूँटी में`,`उलिहातू में`,`भागलपुर जेल में`], a:0},
+      {q:`बिरसा मुंडा का धार्मिक आंदोलन किस नाम से प्रसिद्ध था?`, options:[`बिरसाइट धर्म`,`मुंडा धर्म`,`आदिवासी आंदोलन`,`उलगुलान`], a:0},
+      {q:`बिरसा मुंडा का उद्देश्य क्या था?`, options:[`अंग्रेज़ी शासन और ज़मींदारी प्रथा का अंत करना`,`स्वदेशी आंदोलन`,`उद्योग बढ़ाना`,`कर घटाना`], a:0},
+      {q:`बिरसा मुंडा किस राज्य के थे?`, options:[`झारखंड`,`बिहार`,`ओडिशा`,`छत्तीसगढ़`], a:0},
+      {q:`बिरसा मुंडा दिवस कब मनाया जाता है?`, options:[`15 नवम्बर`,`9 जून`,`1 मई`,`26 जनवरी`], a:0},
+      {q:`झारखंड राज्य की स्थापना किसके जन्मदिन पर की गई थी?`, options:[`बिरसा मुंडा के जन्मदिन पर`,`महात्मा गांधी के जन्मदिन पर`,`नेहरू के जन्मदिन पर`,`भीमराव आंबेडकर के जन्मदिन पर`], a:0},
+      {q:`बिरसा मुंडा ने किस प्रकार के शासन की कल्पना की थी?`, options:[`स्वतंत्र आदिवासी राज्य`,`मुस्लिम शासन`,`फेडरल राज्य`,`राजतंत्र`], a:0},
+      {q:`बिरसा मुंडा के पिता का नाम क्या था?`, options:[`सुगना मुंडा`,`रघु मुंडा`,`मोहन मुंडा`,`हरमू मुंडा`], a:0},
+      {q:`बिरसा मुंडा की माता का नाम क्या था?`, options:[`करमी हाथू`,`लक्ष्मी मुंडा`,`गंगा मुंडा`,`सीता मुंडा`], a:0},
+      {q:`बिरसा मुंडा किस विद्यालय में पढ़े थे?`, options:[`चाईबासा के जर्मन मिशन स्कूल`,`राँची सरकारी स्कूल`,`पटना कॉलेज`,`खूँटी पब्लिक स्कूल`], a:0},
+      {q:`बिरसा मुंडा के अनुयायियों को क्या कहा जाता था?`, options:[`बिरसाइट`,`मुंडाइट`,`संथालाइट`,`धरती आबा समुदाय`], a:0},
+      {q:`बिरसा मुंडा आंदोलन का मुख्य केंद्र कहाँ था?`, options:[`तमाड़ और सरायकेला क्षेत्र`,`दिल्ली`,`बेंगलुरु`,`कोलकाता`], a:0},
+      {q:`बिरसा मुंडा ने किस देवता की पूजा का विरोध किया?`, options:[`स्थानीय बहुदेववाद और ईसाई मिशनरियों की पूजा पद्धति`,`शिव पूजा`,`विष्णु पूजा`,`काली पूजा`], a:0},
+      {q:`बिरसा मुंडा ने लोगों को किसकी ओर प्रेरित किया?`, options:[`एकेश्वरवाद और आत्मनिर्भरता`,`मिशनरी शिक्षा`,`ब्रिटिश समर्थन`,`नवविकास`], a:0},
+      {q:`बिरसा मुंडा ने किस नारे का प्रचार किया था?`, options:[`"अबुआ दिसुम अबुआ राज"`,`"वन्दे मातरम्"`,`"स्वराज मेरा जन्मसिद्ध अधिकार है"`,`"जय जवान जय किसान"`], a:0},
+      {q:`बिरसा मुंडा का आंदोलन किस काल में हुआ था?`, options:[`1895 से 1900`,`1857 से 1860`,`1915 से 1920`,`1930 से 1935`], a:0},
+      {q:`बिरसा मुंडा के आंदोलन को अंग्रेज़ों ने कैसे दबाया?`, options:[`हिंसक दमन और गिरफ्तारी से`,`शांति वार्ता से`,`विवेकपूर्ण समझौते से`,`मुक्ति देकर`], a:0},
+      {q:`बिरसा मुंडा आंदोलन का प्रभाव किस क्षेत्र में सबसे अधिक पड़ा?`, options:[`छोटानागपुर क्षेत्र`,`असम`,`कन्याकुमारी`,`गोवा`], a:0},
+      {q:`बिरसा मुंडा ने किस नीति का विरोध किया?`, options:[`भूमि अधिग्रहण नीति`,`कर नीति`,`शिक्षा नीति`,`स्वास्थ्य नीति`], a:0},
+      {q:`बिरसा मुंडा को गिरफ्तार किस वर्ष किया गया था?`, options:[`1900`,`1895`,`1890`,`1905`], a:0},
+      {q:`बिरसा मुंडा की मृत्यु किस कारण हुई थी?`, options:[`जेल में बीमारी`,`लड़ाई में मृत्यु`,`बुजुर्गावस्था`,`अन्य`], a:0},
+      {q:`बिरसा मुंडा का आंदोलन किस वर्ग के लिए प्रेरणा बना?`, options:[`आदिवासी और किसान वर्ग`,`व्यापारी`,`शिक्षक`,`नौकर`], a:0},
+      {q:`बिरसा मुंडा किस काल में सक्रिय थे?`, options:[`1895–1900`,`1905–1910`,`1880–1885`,`1857–1860`], a:0},
+      {q:`बिरसा मुंडा का मुख्य विरोध किस नीति के विरुद्ध था?`, options:[`भूमि हड़प नीति`,`शिक्षा नीति`,`कर नीति`,`धर्म नीति`], a:0},
+      {q:`बिरसा मुंडा किस जिले से सम्बंधित थे?`, options:[`खूँटी`,`राँची`,`सिमडेगा`,`गुमला`], a:0},
+      {q:`बिरसा मुंडा ने आदिवासियों से क्या आग्रह किया था?`, options:[`अपने पारंपरिक धर्म और संस्कृति की रक्षा`,`नए कानून अपनाने`,`अंग्रेजी सीखने`,`शहरीकरण`], a:0},
+      {q:`बिरसा मुंडा किसके प्रेरणास्रोत बने?`, options:[`आदिवासी अधिकार आंदोलनों के कार्यकर्ता`,`औद्योगिक व्यापारी`,`राजनीतिक दल`,`सैनिक`], a:0},
+      {q:`बिरसा मुंडा आंदोलन के समय ब्रिटिश अधिकारी कौन था?`, options:[`सर ए.सी. लायल`,`सर लॉर्ड कर्जन`,`सर विलियम`,`सर जेकब`], a:0},
+      {q:`बिरसा मुंडा ने अपने धर्म में किस देवता को सर्वोच्च बताया?`, options:[`सिंहबोंगा (परमेश्वर)`,`शिव`,`विष्णु`,`सूर्य`], a:0},
+      {q:`बिरसा मुंडा के आंदोलन का प्रमुख नारा क्या था?`, options:[`"अबुआ दिसुम अबुआ राज"`,`"भारत माता की जय"`,`"वन्दे मातरम्"`,`"सत्य और अहिंसा"`], a:0},
+      {q:`बिरसा मुंडा का आदिवासी क्षेत्र अंग्रेज़ शासन में किस रूप में जाना जाता था?`, options:[`छोटानागपुर पठार`,`संथाल परगना`,`देक्कन`,`मालवा`], a:0},
+      {q:`बिरसा मुंडा ने अपने अनुयायियों को क्या सिखाया?`, options:[`मद्यपान, चोरी, अंधविश्वास का त्याग`,`क्रोधित होना`,`लूट करना`,`वंचित करना`], a:0},
+      {q:`बिरसा मुंडा के अनुयायियों को कौन-सा नाम दिया गया था?`, options:[`बिरसाइट`,`मुंडाइट`,`संत`,`उस्ताद`], a:0},
+      {q:`बिरसा मुंडा के निधन के बाद किस वर्ष में झारखंड क्षेत्र में शांति बहाल हुई?`, options:[`1902`,`1901`,`1900`,`1899`], a:0},
+      {q:`बिरसा मुंडा के नेतृत्व में आंदोलन कहाँ से प्रारंभ हुआ था?`, options:[`खूंटी`,`उलिहातू`,`राँची`,`तमाड़`], a:0},
+      {q:`बिरसा मुंडा ने किस कानून के खिलाफ विद्रोह किया था?`, options:[`फॉरेस्ट एक्ट`,`श्रम कानून`,`कर कानून`,`व्यापार कानून`], a:0},
+      {q:`बिरसा मुंडा का आंदोलन मुख्य रूप से किस वर्ग के लिए था?`, options:[`किसान और मजदूर`,`बंजारा`,`राजाओं`,`जमींदार`], a:0},
+      {q:`बिरसा मुंडा का राजनीतिक लक्ष्य क्या था?`, options:[`आदिवासी राज्य की स्थापना`,`औपनिवेशिक समर्थन`,`औद्योगिकरण`,`कर में कटौती`], a:0},
+      {q:`बिरसा मुंडा के आंदोलन के दौरान कितने ब्रिटिश सैनिकों की मृत्यु हुई थी?`, options:[`लगभग 300`,`लगभग 50`,`लगभग 100`,`लगभग 400`], a:0},
+      {q:`बिरसा मुंडा ने आदिवासियों के बीच किस सिद्धांत का प्रचार किया?`, options:[`एकेश्वरवाद`,`बहुदेववाद`,`ईसाइयत`,`बौद्ध धर्म`], a:0},
+      {q:`बिरसा मुंडा का विद्रोह किस वर्ष अंग्रेज़ों द्वारा दबा दिया गया?`, options:[`1900`,`1897`,`1895`,`1905`], a:0},
+      {q:`बिरसा मुंडा का आंदोलन किस प्रकार का था?`, options:[`सामाजिक, धार्मिक और राजनीतिक आंदोलन`,`केवल धार्मिक आंदोलन`,`केवल राजनीतिक आंदोलन`,`केवल आर्थिक आंदोलन`], a:0},
+      {q:`बिरसा मुंडा की मृत्यु किस जेल में हुई?`, options:[`राँची जेल`,`भागलपुर जेल`,`हजारीबाग जेल`,`पटना जेल`], a:0},
+      {q:`बिरसा मुंडा का आंदोलन किन लोगों के खिलाफ था?`, options:[`अंग्रेज अधिकारी और दिकू`,`भारतीय राजा`,`संथाल`,`मराठा`], a:0},
+      {q:`बिरसा मुंडा को भारत सरकार ने कौन-सा सम्मान दिया है?`, options:[`जननायक और जनजातीय गौरव प्रतीक`,`स्वतंत्रता सेनानी`,`साहित्यकार`,`विज्ञानी`], a:0},
+      {q:`बिरसा मुंडा आंदोलन की मुख्य विशेषता क्या थी?`, options:[`जनजातीय एकता`,`सैनिक आंदोलन`,`औद्योगिक विकास`,`वाणिज्यिक सुधार`], a:0},
+      {q:`बिरसा मुंडा किस भाषा को बढ़ावा देते थे?`, options:[`मुंडारी`,`हिन्दी`,`उड़िया`,`संस्कृत`], a:0},
+      {q:`बिरसा मुंडा के जीवन पर आधारित प्रमुख स्मारक कहाँ है?`, options:[`राँची`,`दिल्ली`,`पटना`,`भोपाल`], a:0},
+      {q:`बिरसा मुंडा के विद्रोह का प्रभाव किस ब्रिटिश कानून में दिखाई दिया?`, options:[`छोटानागपुर टेनेंसी एक्ट, 1908`,`वन अधिनियम, 1894`,`किसान सुरक्षा एक्ट, 1910`,`कस्टम एक्ट, 1905`], a:0},
+      {q:`बिरसा मुंडा का आंदोलन किन लोगों को सबसे अधिक प्रभावित करता है?`, options:[`आदिवासी जनजातियाँ`,`व्यापारी`,`ब्रिटिश अधिकारी`,`ब्राह्मण`], a:0},
+      {q:`बिरसा मुंडा की शिक्षाएँ किससे मिलती-जुलती हैं?`, options:[`आर्य समाज आंदोलन`,`भक्ति आंदोलन`,`सोशलिस्ट आंदोलन`,`कम्युनिस्ट आंदोलन`], a:0},
+      {q:`बिरसा मुंडा की गिरफ्तारी कब हुई थी?`, options:[`3 फरवरी 1900`,`9 जून 1900`,`5 मई 1899`,`1 जनवरी 1900`], a:0},
+      {q:`बिरसा मुंडा का धर्म सुधार किसके खिलाफ था?`, options:[`अंधविश्वास और शोषण के खिलाफ`,`शिक्षा के खिलाफ`,`उद्योग के खिलाफ`,`न्याय के खिलाफ`], a:0},
+      {q:`बिरसा मुंडा का बचपन किस गाँव में बीता?`, options:[`उलिहातू`,`चाल्काद गांव`,`खूँटी`,`तमाड़`], a:0},
+      {q:`बिरसा मुंडा का अनुकरण किन राज्यों के आदिवासियों ने किया?`, options:[`झारखंड, छत्तीसगढ़, ओडिशा`,`पंजाब, हरियाणा, जम्मू`,`तमिलनाडु, केरल, कर्नाटक`,`गुजरात, महाराष्ट्र, गोवा`], a:0},
+      {q:`बिरसा मुंडा का योगदान भारतीय इतिहास में किस रूप में है?`, options:[`जनजातीय नायक और स्वतंत्रता सेनानी`,`कवि`,`संत`,`व्यापारी`], a:0},
+      {q:`बिरसा मुंडा किस आंदोलन से पहले के जननायक माने जाते हैं?`, options:[`स्वदेशी आंदोलन`,`भारत छोड़ो आंदोलन`,`असहयोग आंदोलन`,`सत्याग्रह आंदोलन`], a:0},
+      {q:`बिरसा मुंडा की मृत्यु की तिथि को झारखंड में क्या कहा जाता है?`, options:[`बलिदान दिवस`,`शहीद दिवस`,`गौरव दिवस`,`मुक्ति दिवस`], a:0},
+      {q:`बिरसा मुंडा ने अपने अनुयायियों को किस प्रकार का जीवन जीने की प्रेरणा दी?`, options:[`सादगी और सत्य का जीवन`,`विलासिता`,`युद्धप्रिय जीवन`,`औपनिवेशिक सेवा`], a:0},
+      {q:`बिरसा मुंडा का प्रमुख दुश्मन कौन था?`, options:[`दिकू (बाहरी लोग)`,`मिशनरी`,`राजा`,`सैनिक`], a:0},
+      {q:`बिरसा मुंडा के विद्रोह का प्रभाव किन कानूनों में दिखाई दिया?`, options:[`भूमि अधिकार और जनजातीय संरक्षण कानून`,`शिक्षा नीति`,`कर नीति`,`वाणिज्य नीति`], a:0},
+      {q:`बिरसा मुंडा के नाम पर कौन-सा राष्ट्रीय उद्यान है?`, options:[`बिरसा जैविक उद्यान, राँची`,`सिमलीपाल`,`कान्हा`,`सुंदरबन`], a:0},
+      {q:`बिरसा मुंडा की समाधि स्थल कहाँ है?`, options:[`राँची (कोकर)`,`खूँटी`,`जमशेदपुर`,`डल्टनगंज`], a:0},
+      {q:`बिरसा मुंडा का आंदोलन किस उपनिवेशिक नीतियों के खिलाफ था?`, options:[`भूमि, कर और धार्मिक शोषण`,`शिक्षा नीति`,`उद्योग नीति`,`व्यापार नीति`], a:0},
+      {q:`बिरसा मुंडा की शिक्षाएँ किस वर्ग के लिए सबसे अधिक प्रासंगिक थीं?`, options:[`जनजातीय समाज`,`व्यापारी`,`ब्राह्मण`,`राजाओं`], a:0},
+      {q:`बिरसा मुंडा के अनुयायी किस प्रतीक को मानते थे?`, options:[`लकड़ी का डंडा और धरती`,`सफेद झंडा`,`हरियाली और सूर्य`,`हंसिया`], a:0},
+      {q:`बिरसा मुंडा की मृत्यु के बाद ब्रिटिश सरकार ने क्या किया?`, options:[`भूमि सुधार और जनजातीय संरक्षण नीति बनाई`,`अधिक दमन किया`,`विद्रोह को बढ़ावा दिया`,`किसी तरह की नीति नहीं बनाई`], a:0},
+      {q:`बिरसा मुंडा की विचारधारा किससे मिलती-जुलती थी?`, options:[`स्वराज्य और आत्मनिर्भरता`,`पूंजीवाद`,`औद्योगिकीकरण`,`साम्यवाद`], a:0},
+      {q:`बिरसा मुंडा को अंग्रेज़ी प्रशासन ने किस नाम से बुलाया था?`, options:[`खतरनाक विद्रोही`,`संत`,`कवि`,`सुधारक`], a:0},
+      {q:`बिरसा मुंडा का जीवन किन मूल्यों से प्रेरित था?`, options:[`सत्य, त्याग और न्याय`,`धन और शक्ति`,`राजनीति और व्यापार`,`युद्ध और हिंसा`], a:0},
+      {q:`बिरसा मुंडा के आंदोलन का सबसे बड़ा परिणाम क्या था?`, options:[`छोटानागपुर टेनेंसी एक्ट, 1908 का निर्माण`,`ब्रिटिश शासन मजबूत हुआ`,`उद्योग बढ़ा`,`व्यापार में सुधार हुआ`], a:0},
+      {q:`बिरसा मुंडा की विरासत आज कैसे जीवित है?`, options:[`झारखंड राज्य, आदिवासी गौरव, स्मारक और शिक्षा संस्थान`,`केवल इतिहास पुस्तकों में`,`लोक गीतों में मात्र`,`अंग्रेज अभिलेखों में`], a:0}
+    ];
+
+    const quizArea = document.getElementById('quizArea');
+    const submitBtn = document.getElementById('submitBtn');
+    const resetBtn = document.getElementById('resetBtn');
+    const toggleAnsBtn = document.getElementById('toggleAnsBtn');
+    const correctCountEl = document.getElementById('correctCount');
+    const wrongCountEl = document.getElementById('wrongCount');
+    const unansweredCountEl = document.getElementById('unansweredCount');
+    const resultArea = document.getElementById('resultArea');
+
+    let showAnswers = false;
+
+    function buildQuiz(){
+      const frag = document.createDocumentFragment();
+      questions.forEach((item, idx) => {
+        const q = document.createElement('div'); q.className='q'; q.id='q'+idx;
+        const h = document.createElement('h3'); h.innerText = (idx+1)+'. '+item.q; q.appendChild(h);
+        const opts = document.createElement('div'); opts.className='options';
+        item.options.forEach((op,i)=>{
+          const label = document.createElement('label'); label.className='option';
+          const radio = document.createElement('input'); radio.type='radio'; radio.name='q'+idx; radio.value=i;
+          const span = document.createElement('span'); span.innerText = String.fromCharCode(65+i)+'. '+op;
+          label.appendChild(radio); label.appendChild(span);
+          opts.appendChild(label);
+        });
+        q.appendChild(opts);
+        frag.appendChild(q);
+      });
+      quizArea.innerHTML=''; quizArea.appendChild(frag);
+    }
+
+    function gradeQuiz(){
+      let correct=0, wrong=0, unanswered=0;
+      resultArea.innerHTML='';
+
+      questions.forEach((item, idx)=>{
+        const selected = document.querySelector('input[name="q'+idx+'"]:checked');
+        const qEl = document.getElementById('q'+idx);
+        // remove existing answer display
+        const prevAns = qEl.querySelector('.answer'); if(prevAns) prevAns.remove();
+        qEl.querySelectorAll('.option').forEach(o=>{ o.style.border='1px solid transparent'; o.style.opacity='1' });
+
+        if(!selected){ unanswered++; }
+        else{
+          const val = parseInt(selected.value,10);
+          if(val === item.a){ correct++; selected.closest('label').style.border = '1px solid rgba(16,185,129,.18)'; }
+          else{ wrong++; selected.closest('label').style.opacity = '0.7'; qEl.querySelectorAll('.option')[item.a].style.border = '1px solid rgba(16,185,129,.18)'; }
+        }
+
+        if(showAnswers){
+          const ansDiv = document.createElement('div'); ansDiv.className='answer'; ansDiv.innerText = 'सही उत्तर: '+String.fromCharCode(65+item.a)+'. '+item.options[item.a]; qEl.appendChild(ansDiv);
+        }
+      });
+
+      correctCountEl.innerText = correct; wrongCountEl.innerText = wrong; unansweredCountEl.innerText = unanswered;
+      const percent = ((correct/questions.length)*100).toFixed(2);
+      const box = document.createElement('div'); box.className = 'resultBox '+(percent>=60? 'correctBox':'incorrectBox');
+      box.innerHTML = `आपका स्कोर: <strong>${correct} / ${questions.length}</strong><br>प्रतिशत: <strong>${percent}%</strong>`;
+      resultArea.appendChild(box);
+      window.scrollTo({top:0,behavior:'smooth'});
+    }
+
+    submitBtn.addEventListener('click',()=>{ gradeQuiz(); });
+    resetBtn.addEventListener('click',()=>{ document.querySelectorAll('input[type=radio]').forEach(i=>i.checked=false); document.querySelectorAll('.q').forEach(q=>{ const a=q.querySelector('.answer'); if(a) a.remove(); q.querySelectorAll('.option').forEach(o=>{ o.style.opacity='1'; o.style.border='1px solid transparent' }) }); correctCountEl.innerText='0'; wrongCountEl.innerText='0'; unansweredCountEl.innerText=questions.length; resultArea.innerHTML=''; });
+
+    toggleAnsBtn.addEventListener('click',()=>{ showAnswers = !showAnswers; toggleAnsBtn.innerText = 'Show Answers: '+(showAnswers? 'ON':'OFF'); gradeQuiz(); });
+
+    // initialize
+    buildQuiz();
+    // set unanswered count to total
+    unansweredCountEl.innerText = questions.length;
+  </script>
+</body>
+</html>

@@ -1,0 +1,353 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Jharkhand GK</title>
+  <style>
+    :root{--bg:#0f1724;--card:#0b1220;--accent:#06b6d4;--text:#e6eef8}
+    *{box-sizing:border-box}
+    body{font-family:Inter,system-ui,Segoe UI,Roboto,Arial; margin:0; min-height:100vh; background:linear-gradient(180deg,#071028 0%, #07121a 60%); color:var(--text); display:flex; align-items:center; justify-content:center; padding:24px}
+    .container{width:100%; max-width:900px}
+    .card{background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01)); border-radius:12px; padding:20px; box-shadow:0 8px 30px rgba(2,6,23,0.6)}
+    h1{margin:0 0 14px; font-size:20px}
+    .top{display:flex; justify-content:space-between; gap:12px; align-items:center}
+    .sets{display:flex; gap:8px; flex-wrap:wrap}
+    button.set{background:#071a2a;border:1px solid rgba(255,255,255,0.04); padding:8px 10px; border-radius:8px; color:var(--text); cursor:pointer}
+    button.set.active{background:linear-gradient(90deg,#0ea5a5, #06b6d4); color:#012; font-weight:600}
+    .meta{font-size:13px; opacity:0.9}
+
+    .quiz-area{margin-top:16px}
+    .qhead{display:flex; justify-content:space-between; align-items:center; gap:12px}
+    .question{margin-top:12px; font-weight:600; font-size:18px}
+    .options{display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-top:14px}
+    .opt{padding:10px; border-radius:10px; background:rgba(255,255,255,0.02); border:1px solid rgba(255,255,255,0.03); cursor:pointer}
+    .opt.correct{outline:3px solid rgba(34,197,94,0.25); box-shadow:0 6px 20px rgba(34,197,94,0.06)}
+    .opt.wrong{outline:3px solid rgba(239,68,68,0.18); box-shadow:0 6px 20px rgba(239,68,68,0.05)}
+
+    .controls{display:flex; justify-content:space-between; align-items:center; margin-top:16px}
+    .btn{padding:8px 12px; border-radius:8px; border:none; cursor:pointer; background:var(--accent); color:#042; font-weight:600}
+
+    /* progress bar */
+    .progress-wrap{height:14px; width:100%; background:rgba(255,255,255,0.03); border-radius:12px; overflow:hidden; margin-top:14px}
+    .progress{height:100%; width:100%; transition:width 0.2s linear; display:flex; align-items:center; padding-left:8px; font-size:12px; font-weight:600}
+
+    .footer{margin-top:12px; display:flex; justify-content:flex-end; gap:10px; align-items:center}
+
+    .result{display:none; margin-top:16px; padding:12px; border-radius:10px; background:linear-gradient(180deg, rgba(2,6,23,0.6), rgba(2,6,23,0.4))}
+
+    .small{font-size:13px; opacity:0.9}
+
+    @media(max-width:640px){.options{grid-template-columns:1fr} .top{flex-direction:column; align-items:stretch}}
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="card">
+      <div class="top">
+        <div>
+          <h1>Jharkhand GK</h1>
+          <div class="meta small">: <strong>20 seconds</strong>..</div>
+        </div>
+        <div>
+          <div class="sets" id="sets"></div>
+        </div>
+      </div>
+
+      <div class="quiz-area" id="quizArea" style="display:none">
+        <div class="qhead">
+          <div class="small">Test: <span id="currentSet">1</span> — Question <span id="qIndex">1</span> / 20</div>
+          <div class="small">Score: <span id="score">0</span></div>
+        </div>
+
+        <div class="question" id="questionText">Question text</div>
+
+        <div class="progress-wrap" aria-hidden="true">
+          <div id="progress" class="progress">20s</div>
+        </div>
+
+        <div class="options" id="options"></div>
+
+        <div class="controls">
+          <div>
+            <button class="btn" id="prevBtn">Previous</button>
+            <button class="btn" id="nextBtn">Next Button</button>
+          </div>
+          <div class="small">Auto-advances when timer ends.</div>
+        </div>
+
+        <div class="result" id="resultBox"></div>
+      </div>
+
+      <div style="margin-top:14px; display:flex; gap:8px; align-items:center; justify-content:flex-end">
+        <button class="btn" id="restartBtn">Restart Test</button>
+        <button class="btn" id="resetAllBtn">Choose Another Test</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // 6 tests, each with 20 Jharkhand GK MCQs. Questions chosen to be mostly time-stable facts.
+    const tests = [
+      [
+        {q:"What is the capital of Jharkhand?", opts:["Jamshedpur","Dhanbad","Ranchi","Jharia"], a:2},
+        {q:"In which year was Jharkhand formed as a separate state from Bihar?", opts:["1998","2000","2002","1999"], a:1},
+        {q:"Which river flows through Ranchi and is famous for its plateau waterfalls?", opts:["Ganges","Subarnarekha","Damodar","Brahmaputra"], a:1},
+        {q:"Which is a major mineral found in Jharkhand?", opts:["Mica","Diamond","Petroleum","Natural Gas"], a:0},
+        {q:"Which tribal group is indigenous to Jharkhand and known for their dance Santhali?", opts:["Santhal","Gond","Bhils","Toda"], a:0},
+        {q:"Betla National Park is located in which Indian state?", opts:["Madhya Pradesh","Jharkhand","Chhattisgarh","Odisha"], a:1},
+        {q:"Which festival is traditionally celebrated by tribal communities in Jharkhand marking the beginning of the new year?", opts:["Diwali","Sarhul","Pongal","Baisakhi"], a:1},
+        {q:"Which city is known as the Steel City of Jharkhand?", opts:["Ranchi","Bokaro","Jamshedpur","Dhanbad"], a:2},
+        {q:"Which plateau largely covers Jharkhand?", opts:["Deccan Plateau","Chota Nagpur Plateau","Malwa Plateau","Sivaganga Plateau"], a:1},
+        {q:"Which national park in Jharkhand is famous for tigers and is part of the Palamau Tiger Reserve?", opts:["Hazaribagh National Park","Betla National Park","Dalma Wildlife Sanctuary","Koderma Wildlife Sanctuary"], a:1},
+        {q:"The major language spoken in Jharkhand is?", opts:["Bengali","Hindi","Tamil","Kannada"], a:1},
+        {q:"Which industry historically dominated Jamshedpur?", opts:["Textiles","Automobile","Steel","Information Technology"], a:2},
+        {q:"Which river is NOT in Jharkhand?", opts:["Subarnarekha","Damodar","Mahanadi","Barakar"], a:2},
+        {q:"Which district is famous for coal mining in Jharkhand?", opts:["Ranchi","Dhanbad","Hazaribagh","Giridih"], a:1},
+        {q:"What is the state animal of Jharkhand?", opts:["Elephant","Indian Bison (Gaur)","Tiger","One-horned Rhinoceros"], a:1},
+        {q:"Which famous freedom fighter from Jharkhand led tribal uprisings?", opts:["Birsa Munda","Subhash Chandra Bose","Rani of Jhansi","Alluri Sitarama Raju"], a:0},
+        {q:"Which mineral is Jharkhand the world's top producer of historically?", opts:["Gold","Mica","Cobalt","Lithium"], a:1},
+        {q:"Which hill station is located near Ranchi and is a popular local tourist spot?", opts:["Netarhat","Panchghagh","Tagore Hill","Mussoorie"], a:2},
+        {q:"Which of these is an important agricultural product in Jharkhand?", opts:["Rice","Almonds","Olives","Tea"], a:0},
+        {q:"Which parliamentary body represents Jharkhand at the national level?", opts:["Lok Sabha","Vidhan Sabha","Rajya Sabha","Panchayat"], a:0}
+      ],
+      [
+        {q:"Which city is known as the 'Land of Forests' in Jharkhand?", opts:["Ranchi","Palamu","Bokaro","Hazaribagh"], a:1},
+        {q:"Which dam in Jharkhand is built on River Subarnarekha?", opts:["Parasnath Dam","Getalsud Dam","Galudih Barrage","Tenughat Dam"], a:2},
+        {q:"Which industry is prominent in Bokaro?", opts:["Iron and Steel","IT","Shipbuilding","Textiles"], a:0},
+        {q:"Which district hosts the Rajrappa Temple, a famous pilgrimage site?", opts:["Ramgarh","Bokaro","Giridih","Jamtara"], a:2},
+        {q:"Which mountain is the highest point in Jharkhand?", opts:["Parasnath Hill","Netarhat Hill","Gumla Peak","Deoghar Hill"], a:0},
+        {q:"Which wildlife sanctuary near Jamshedpur is known for elephants?", opts:["Dalma Wildlife Sanctuary","Betla National Park","Hazaribagh Sanctuary","Gola"], a:0},
+        {q:"Which is the state bird of Jharkhand?", opts:["Indian Peafowl","Asian Koel","Indian Roller","Hill Myna"], a:2},
+        {q:"Which commodity is not a major export from Jharkhand?", opts:["Coal","Mica","Iron Ore","Coffee"], a:3},
+        {q:"What is the name of Jharkhand's legislative assembly?", opts:["Jharkhand Vidhan Sabha","Bihar Vidhan Sabha","Ranchi Legislature","Jharkhand Council"], a:0},
+        {q:"Which district is famous for pottery and the town of Srinagar?", opts:["Dumka","Giridih","Deoghar","Godda"], a:0},
+        {q:"Which national highway passes through Ranchi?", opts:["NH-33","NH-44","NH-16","NH-2"], a:0},
+        {q:"Jharkhand shares its border with which state to the east?", opts:["West Bengal","Odisha","Bihar","Chhattisgarh"], a:0},
+        {q:"Which ancient rock paintings are found in Jharkhand?", opts:["Bhimbetka","Ranchi Cave Paintings","Hazaribagh Paintings","Ulihatu Paintings"], a:3},
+        {q:"Which is a major railway junction in Jharkhand?", opts:["Gaya Junction","Dhanbad Junction","Asansol Junction","Patna Junction"], a:1},
+        {q:"Which river is a tributary of the Ganges and flows through Jharkhand?", opts:["Kosi","Barakar","Narmada","Mahanadi"], a:1},
+        {q:"Which tribal custom is commonly celebrated in rural Jharkhand?", opts:["Karma","Ougadi","Onam","Lohri"], a:0},
+        {q:"Which town is famous for Deoghar Temple in Jharkhand?", opts:["Deoghar","Daltonganj","Giridih","Jamtara"], a:0},
+        {q:"Which district is known for its mica belt?", opts:["Koderma","Ranchi","Bokaro","Hazaribagh"], a:0},
+        {q:"Which is the famous hospital/medical institute in Ranchi?", opts:["RIMS (Rajendra Institute of Medical Sciences)","AIIMS Ranchi","PGIMER Ranchi","CMC Ranchi"], a:0},
+        {q:"Which fruit is popularly cultivated in parts of Jharkhand?", opts:["Mango","Apple","Grapes","Kiwi"], a:0}
+      ],
+      [
+        {q:"Which important archaeological site is located in Jharkhand related to ancient history?", opts:["Ujjain","Chotanagpur sites","Malhar","Kanger"], a:1},
+        {q:"Which town is known as a pilgrimage centre for Jainism in Jharkhand?", opts:["Parasnath","Ranchi","Deoghar","Netarhat"], a:0},
+        {q:"Which is the famous waterfall near Ranchi?", opts:["Hundru Falls","Jog Falls","Dudhsagar Falls","Nohkalikai Falls"], a:0},
+        {q:"Which plateau is famous for its mineral wealth covering much of Jharkhand?", opts:["Chota Nagpur Plateau","Deccan Plateau","Malwa Plateau","Aravalli Plateau"], a:0},
+        {q:"Which of these cities is NOT in Jharkhand?", opts:["Ranchi","Jamshedpur","Dhanbad","Patna"], a:3},
+        {q:"Which crop is commonly grown in the upland areas of Jharkhand?", opts:["Millets","Wheat","Barley","Sugarcane"], a:0},
+        {q:"What is the traditional council of village elders among some tribes called?", opts:["Panchayat","Majhi","Gram Sabha","Pahari"], a:1},
+        {q:"Which industry saw early development in Jamshedpur founded by Jamshedji Tata?", opts:["Steel","Shipbuilding","Electronics","Textiles"], a:0},
+        {q:"Which river forms part of the border between Jharkhand and West Bengal?", opts:["Damodar","Subarnarekha","Ganges","Narmada"], a:1},
+        {q:"Which district hosts the Parasnath Hills — a Jain pilgrimage site?", opts:["Giridih","Dhanbad","Hazaribagh","Chaibasa"], a:0},
+        {q:"Which mineral is Koderma district famous for?", opts:["Mica","Coal","Bauxite","Gold"], a:0},
+        {q:"Which sanctuary lies in the Hazaribagh region?", opts:["Hazaribagh Wildlife Sanctuary","Dalma Wildlife Sanctuary","Betla National Park","Kudremukh"], a:0},
+        {q:"Which major city lies on the banks of the Damodar river?", opts:["Bokaro","Ranchi","Deoghar","Chatra"], a:0},
+        {q:"Which is the traditional dance of Santhal tribe?", opts:["Santhali Dance","Bhangra","Garba","Kathak"], a:0},
+        {q:"Which is NOT a language historically spoken in Jharkhand?", opts:["Santhali","Ho","Kokborok","Munda"], a:2},
+        {q:"Which thermal power station is located in Bokaro?", opts:["Bokaro Thermal Power Station","Farakka Power Station","Korba Power Plant","Talcher Thermal"], a:0},
+        {q:"Which Jharkhand city is famous for its mica and is known as 'mica capital'?", opts:["Koderma","Dhanbad","Jamshedpur","Ranchi"], a:0},
+        {q:"Which is a major environmental issue in Jharkhand due to mining?", opts:["Deforestation and land degradation","Desertification","Glacial melting","Coastal erosion"], a:0},
+        {q:"Which festival marks the worship of nature by tribal communities in Jharkhand?", opts:["Tusu","Karma","Holi","Eid"], a:1},
+        {q:"Which tourist spot near Ranchi is known for a peaceful hilltop and panoramic view?", opts:["Tagore Hill","Panchghagh Falls","Netarhat","Parasnath"], a:0}
+      ],
+      [
+        {q:"Which mineral-rich belt runs through parts of Jharkhand?", opts:["Chotanagpur Plateau mineral belt","Godavari basin","Narmada belt","Sundarbans"], a:0},
+        {q:"Which district is known for the Sahebganj Rajma (kidney beans)?", opts:["Sahebganj","Giridih","Ranchi","Hazaribagh"], a:0},
+        {q:"Which city is famous for coal and is often called the 'Coal Capital of India' (in context of region)?", opts:["Dhanbad","Jamshedpur","Bokaro","Hazaribagh"], a:0},
+        {q:"The tribal leader Birsa Munda is associated with which movement?", opts:["Ulgulan (Revolt)","Quit India Movement","Non-Cooperation Movement","Salt Satyagraha"], a:0},
+        {q:"Which Jharkhand town is famous for its Jain temples at the top of a hill?", opts:["Parasnath","Ranchi","Daltonganj","Jamtara"], a:0},
+        {q:"Which bird species is commonly found in Jharkhand's forests?", opts:["Indian Roller","Penguin","Emu","Kakapo"], a:0},
+        {q:"Which is a major port for mineral transport near Jharkhand (outside state)?", opts:["Kolkata port","Mumbai port","Visakhapatnam","Cochin"], a:0},
+        {q:"Which district hosts the Museum of Archaeology and Tribal Culture (example)?", opts:["Ranchi","Dumka","Palamu","Koderma"], a:0},
+        {q:"Which day (date) is celebrated as Jharkhand Foundation Day?", opts:["15 November","1 January","26 August","22 August"], a:0},
+        {q:"Which famous steel plant is located in Jamshedpur?", opts:["Tata Steel","Sail Steel","JSW Steel","Essar Steel"], a:0},
+        {q:"Which of these is an important handicraft of Jharkhand?", opts:["Terracotta and tribal art","Pashmina weaving","Kutch embroidery","Chikankari"], a:0},
+        {q:"Which city is an educational hub with RIMS and other institutions?", opts:["Ranchi","Dhanbad","Jamshedpur","Bokaro"], a:0},
+        {q:"Which river flows past the important industrial town of Bokaro?", opts:["Gomti","Gandak","Damodar","Subarnarekha"], a:2},
+        {q:"Which district is known for the Deoghar temple and is a pilgrimage centre?", opts:["Deoghar","Palamu","Koderma","Giridih"], a:0},
+        {q:"Which celebration includes offerings to trees and nature among tribes?", opts:["Sarhul","Christmas","Raksha Bandhan","Guru Purnima"], a:0},
+        {q:"Which language family do many Jharkhand tribal languages belong to?", opts:["Austroasiatic and Munda family","Dravidian","Indo-European solely","Sino-Tibetan"], a:0},
+        {q:"Which is a popular local sweet in Jharkhand?", opts:["Thekua","Gulab Jamun","Rasgulla","Petha"], a:0},
+        {q:"Which city hosts the Heavy Engineering Corporation (HEC)?", opts:["Ranchi","Jamshedpur","Bokaro","Dhanbad"], a:0},
+        {q:"Which district borders Chhattisgarh to the west?", opts:["Latehar","Ranchi","Bokaro","Dhanbad"], a:0},
+        {q:"Which mineral extraction has led to economic growth and environmental concerns in Jharkhand?", opts:["Coal mining","Fishing","Tea plantation","Gold mining"], a:0}
+      ],
+      [
+        {q:"Which dance accompanies Sarhul festival in Jharkhand?", opts:["Santhali dance","Bhangra","Kathak","Bihu"], a:0},
+        {q:"Which town is famous for Parasnath Hills (Jain pilgrim)?", opts:["Giridih","Ranchi","Dhanbad","Bokaro"], a:0},
+        {q:"Which state lies to the north of Jharkhand?", opts:["Bihar","West Bengal","Odisha","Chhattisgarh"], a:0},
+        {q:"Which commodity historically gave Jharia its name?", opts:["Coal fields","Tea gardens","Iron mines","Silk"], a:0},
+        {q:"Which wildlife reserve in Jharkhand is known for elephants and leopards?", opts:["Dalma Wildlife Sanctuary","Sundarbans","Gir National Park","Kaziranga"], a:0},
+        {q:"Which is the primary mode for transporting heavy minerals from Jharkhand?", opts:["Railways","Airways","Inland waterways","Cable cars"], a:0},
+        {q:"Which traditional instrument is used in tribal music of Jharkhand?", opts:["Mandar and Nagara","Sitar","Piano","Violin"], a:0},
+        {q:"Which district contains the tourist spot Hundru Falls?", opts:["Ranchi","Dhanbad","Jamtara","Hazaribagh"], a:0},
+        {q:"Which is the most common type of house among many tribal villages in Jharkhand?", opts:["Mud and thatch houses","Igloos","Concrete apartments","Yurts"], a:0},
+        {q:"Which institution provides technical education in Dhanbad?", opts:["IIT (Indian Institute of Technology)","IIM","AIIMS","NIT"], a:0},
+        {q:"Which mineral is NOT abundant in Jharkhand?", opts:["Coal","Iron Ore","Mica","Diamonds"], a:3},
+        {q:"Which is a notable hill station in Jharkhand known for sunrise views?", opts:["Netarhat","Shimla","Ooty","Darjeeling"], a:0},
+        {q:"Which river is famous for the Tenughat Dam in Jharkhand?", opts:["Damodar","Ganges","Kaveri","Brahmaputra"], a:0},
+        {q:"Which art form is associated with tribal storytelling in Jharkhand?", opts:["Folk songs and oral epics","Opera","Ballet","Kabuki"], a:0},
+        {q:"Which is the major export commodity from Jharkhand's mining sector?", opts:["Coal and iron ore","Tea","Spices","Seafood"], a:0},
+        {q:"Which city in Jharkhand is on the main route between Kolkata and Ranchi?", opts:["Asansol","Dhanbad","Patna","Varanasi"], a:1},
+        {q:"Which mineral sparked the early 20th-century global demand for Jharkhand's mines?", opts:["Mica","Uranium","Copper","Nickel"], a:0},
+        {q:"Which body of water do most Jharkhand rivers eventually join?", opts:["Bay of Bengal","Arabian Sea","Indian Ocean via western ports","Red Sea"], a:0},
+        {q:"Which scheme historically aimed to improve tribal welfare in regions like Jharkhand?", opts:["Tribal Sub-Plan","Green Revolution","Blue Revolution","White Revolution"], a:0},
+        {q:"Which festival in Jharkhand coincides with the harvesting season?", opts:["Karma","Makar Sankranti","Holi","Eid"], a:0}
+      ],
+      [
+        {q:"Which educational institute is located in Dhanbad and well-known for engineering?", opts:["IIT (ISM) Dhanbad","IIM Dhanbad","AIIMS Dhanbad","NIFT Dhanbad"], a:0},
+        {q:"Which is the principal plain area in Jharkhand used for agriculture?", opts:["Damodar valley plains","Ganges plains","Indus plains","Brahmaputra plains"], a:0},
+        {q:"Which district is famous for the Sonajhuri forests and tourist spots?", opts:["Ranchi","Hazaribagh","Dumka","Giridih"], a:1},
+        {q:"Which crop is staple food for many in Jharkhand?", opts:["Rice","Wheat","Sorghum","Millet"], a:0},
+        {q:"Which historical tribe led the Ulgulan movement?", opts:["Munda","Santhal","Oraon","Kharia"], a:0},
+        {q:"Which town is famous for its Hazaribagh National Park?", opts:["Hazaribagh","Ranchi","Khunti","Garhwa"], a:0},
+        {q:"Which state capital is located south of Jharkhand?", opts:["Kolkata","Bhubaneswar","Ranchi","Patna"], a:1},
+        {q:"Which wildlife species is protected in many Jharkhand reserves?", opts:["Tiger","Polar Bear","Kangaroo","Panda"], a:0},
+        {q:"Which mineral is often associated with the region's rich geology besides coal?", opts:["Iron ore","Salt","Natural Gas","Oil"], a:0},
+        {q:"Which is a notable industrial township founded by Tata?", opts:["Jamshedpur","Bokaro","Ranchi","Dhanbad"], a:0},
+        {q:"Which art of pottery is traditional in parts of Jharkhand?", opts:["Terracotta craft","Blue pottery","Kalamkari","Zardosi"], a:0},
+        {q:"Which hill in Jharkhand is a site of pilgrimage and has Jain temples?", opts:["Parasnath","Netarhat","Tagore Hill","Panchghagh"], a:0},
+        {q:"Which important road connects Ranchi to other parts of the state?", opts:["NH-33","NH-16","NH-44","NH-2"], a:0},
+        {q:"Which festival sees community feasts and dance among tribes?", opts:["Sarhul","Christmas","Diwali","Eid"], a:0},
+        {q:"Which district contains the Palamu Tiger Reserve?", opts:["Palamu","Ranchi","Dhanbad","Jamtara"], a:0},
+        {q:"Which traditional craft uses natural dyes and is found in Jharkhand?", opts:["Tribal textile dyeing","Batik from Indonesia","Ikat from Gujarat","Phulkari"], a:0},
+        {q:"Which state-run railway workshop exists in Jharkhand?", opts:["Carriage Repair Workshop at Kharagpur","Carriage Repair Workshop at Dhanbad","Golden Rock","Perambur"], a:1},
+        {q:"Which of these is a hill resort known for cooler climate in Jharkhand?", opts:["Netarhat","Thiruvananthapuram","Pondicherry","Kovalam"], a:0},
+        {q:"Which is the motto of Jharkhand's state emblem (if applicable)?", opts:["Unity and Progress","Satyameva Jayate","Service and Sacrifice","Truth Alone Triumphs"], a:0},
+        {q:"Which river valley has been developed for irrigation and industry in Jharkhand?", opts:["Damodar Valley","Kaveri Valley","Godavari Valley","Mahanadi Valley"], a:0}
+      ]
+    ];
+
+    // Basic app state
+    let currentSet = 0; // 0-based index for tests
+    let qIndex = 0;
+    let score = 0;
+    const TIME_PER_Q = 20; // seconds
+    let remaining = TIME_PER_Q;
+    let timerInterval = null;
+    let locked = false; // when user chose an option
+
+    const setsWrap = document.getElementById('sets');
+    const quizArea = document.getElementById('quizArea');
+    const currentSetEl = document.getElementById('currentSet');
+    const qIndexEl = document.getElementById('qIndex');
+    const questionText = document.getElementById('questionText');
+    const optionsWrap = document.getElementById('options');
+    const scoreEl = document.getElementById('score');
+    const progressEl = document.getElementById('progress');
+    const resultBox = document.getElementById('resultBox');
+    const prevBtn = document.getElementById('prevBtn');
+    const nextBtn = document.getElementById('nextBtn');
+    const restartBtn = document.getElementById('restartBtn');
+    const resetAllBtn = document.getElementById('resetAllBtn');
+
+    // create set buttons
+    for(let i=0;i<6;i++){
+      const b = document.createElement('button'); b.className='set'; b.textContent=`Test ${i+1}`;
+      b.addEventListener('click', ()=>{selectSet(i)});
+      setsWrap.appendChild(b);
+    }
+
+    function selectSet(i){
+      currentSet = i; qIndex=0; score=0; remaining=TIME_PER_Q; locked=false;
+      // UI
+      Array.from(document.querySelectorAll('.set')).forEach((el,idx)=> el.classList.toggle('active', idx===i));
+      quizArea.style.display='block';
+      currentSetEl.textContent = i+1;
+      qIndexEl.textContent = qIndex+1;
+      scoreEl.textContent = score;
+      resultBox.style.display='none';
+      renderQuestion();
+      startTimer();
+    }
+
+    function renderQuestion(){
+      const qobj = tests[currentSet][qIndex];
+      questionText.textContent = qobj.q;
+      optionsWrap.innerHTML='';
+      qobj.opts.forEach((opt, idx)=>{
+        const d = document.createElement('div'); d.className='opt'; d.tabIndex=0; d.textContent=opt;
+        d.addEventListener('click', ()=> chooseOption(idx,d));
+        d.addEventListener('keydown', (e)=>{ if(e.key==='Enter') chooseOption(idx,d); });
+        optionsWrap.appendChild(d);
+      });
+      qIndexEl.textContent = qIndex+1;
+      remaining = TIME_PER_Q; updateProgress(); locked=false;
+    }
+
+    function chooseOption(idx, el){
+      if(locked) return; locked=true;
+      const qobj = tests[currentSet][qIndex];
+      const correct = qobj.a;
+      Array.from(optionsWrap.children).forEach((c,ci)=>{
+        c.classList.remove('correct','wrong');
+        if(ci===correct) c.classList.add('correct');
+        if(ci===idx && ci!==correct) c.classList.add('wrong');
+      });
+      if(idx===correct){ score++; scoreEl.textContent = score; showResult('Correct ✅'); }
+      else { showResult('Wrong ❌. Correct answer highlighted'); }
+      // short delay then advance
+      clearInterval(timerInterval);
+      setTimeout(()=>{ if(qIndex < tests[currentSet].length -1){ qIndex++; renderQuestion(); startTimer(); } else { finishTest(); } }, 900);
+    }
+
+    function showResult(msg){ resultBox.style.display='block'; resultBox.textContent = msg; }
+
+    function startTimer(){ clearInterval(timerInterval); remaining = TIME_PER_Q; updateProgress(); timerInterval = setInterval(()=>{
+      remaining -= 0.2; // smooth
+      if(remaining<=0){ remaining=0; updateProgress(); clearInterval(timerInterval); handleTimeUp(); }
+      else updateProgress();
+    },200);
+    }
+
+    function updateProgress(){
+      const pct = Math.max(0, remaining / TIME_PER_Q);
+      progressEl.style.width = (pct*100) + '%';
+      // compute color from green (0,255,0) -> red (255,0,0)
+      const r = Math.round((1 - pct) * 255);
+      const g = Math.round(pct * 255);
+      progressEl.style.background = `rgb(${r},${g},16)`; // slight warm tint
+      progressEl.textContent = Math.ceil(remaining) + 's';
+    }
+
+    function handleTimeUp(){ locked=true; // highlight correct
+      const qobj = tests[currentSet][qIndex];
+      Array.from(optionsWrap.children).forEach((c,ci)=>{ if(ci===qobj.a) c.classList.add('correct'); });
+      showResult('Time up ⏱️ — Correct answer highlighted');
+      setTimeout(()=>{ if(qIndex < tests[currentSet].length -1){ qIndex++; renderQuestion(); startTimer(); } else { finishTest(); } }, 900);
+    }
+
+    function finishTest(){ clearInterval(timerInterval); resultBox.style.display='block'; resultBox.innerHTML = `<strong>Test complete!</strong> Score: ${score} / ${tests[currentSet].length}`;
+      // allow restart or choose another set
+    }
+
+    prevBtn.addEventListener('click', ()=>{
+      if(qIndex>0){ qIndex--; renderQuestion(); startTimer(); }
+    });
+    nextBtn.addEventListener('click', ()=>{
+      if(qIndex < tests[currentSet].length -1){ qIndex++; renderQuestion(); startTimer(); } else { finishTest(); }
+    });
+
+    restartBtn.addEventListener('click', ()=>{
+      qIndex=0; score=0; scoreEl.textContent = score; renderQuestion(); startTimer(); resultBox.style.display='none';
+    });
+    resetAllBtn.addEventListener('click', ()=>{
+      clearInterval(timerInterval); quizArea.style.display='none'; Array.from(document.querySelectorAll('.set')).forEach(el=>el.classList.remove('active'));
+    });
+
+    // Quick start: show sets and hint
+    // (User must choose a test to begin.)
+
+    // Accessibility: keyboard navigation for sets
+    Array.from(document.querySelectorAll('.set')).forEach((el,idx)=> el.tabIndex=0);
+
+    // If user wants, auto-select first test by uncommenting below:
+    // selectSet(0);
+  </script>
+</body>
+</html>
